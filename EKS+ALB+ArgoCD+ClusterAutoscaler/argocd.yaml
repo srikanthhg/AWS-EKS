@@ -14,7 +14,7 @@ spec:
   rules:
     - http:
         paths:
-          - path: /argocd
+          - path: / # argocd will work only in / , not working /argocd
             pathType: Prefix
             backend:
               service:
