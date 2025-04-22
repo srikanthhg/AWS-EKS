@@ -22,7 +22,7 @@ resource "helm_release" "aws-load-balancer-controller" {
   },
   {
     name  = "vpcId"
-    value = data.aws_vpc.main.id
+    value = module.vpc.vpc_id
   },
   {
     name  = "serviceAccount.create"
@@ -34,5 +34,5 @@ resource "helm_release" "aws-load-balancer-controller" {
   }
   ]
 
-  depends_on = [aws_eks_cluster.my_cluster, aws_eks_node_group.ondemand_nodes, kubernetes_service_account.alb_controller_sa]
+  depends_on = [kubernetes_service_account.alb_controller_sa]
 }

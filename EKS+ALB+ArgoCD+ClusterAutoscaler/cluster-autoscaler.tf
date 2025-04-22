@@ -23,7 +23,7 @@
 # #   name               = "cluster-autoscaler-role-${var.cluster_name}-${var.cluster_region}-${var.cluster_version}-${var.cluster_id}"
 #     name               = "cluster-autoscaler-policy"
 #     policy = jsonencode({
-        
+
 #         "Version"= "2012-10-17",
 #         "Statement"= [
 #             {

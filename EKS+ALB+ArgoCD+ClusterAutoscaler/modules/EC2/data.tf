@@ -36,3 +36,12 @@ data "aws_subnets" "public_subnets" {
     values = ["1"]                                 # Value to match
   }
 }
+
+data "aws_security_group" "ec2_sg" {
+  filter{
+    name = "tag:Name" # filter by tag name
+    values = ["allow_all"]
+  }
+  name = "allow_all"
+  vpc_id = data.aws_vpc.main.id
+}

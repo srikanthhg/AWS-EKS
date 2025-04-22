@@ -1,9 +1,3 @@
-resource "aws_iam_openid_connect_provider" "eks-oidc" {
-  client_id_list  = ["sts.amazonaws.com"]
-  thumbprint_list = [data.tls_certificate.eks-certificate.certificates[0].sha1_fingerprint]
-  url             = data.tls_certificate.eks-certificate.url
-}
-
 resource "aws_iam_role" "alb_controller_role" {
   name = "alb-controller-role"
   assume_role_policy = jsonencode({
@@ -13,12 +7,14 @@ resource "aws_iam_role" "alb_controller_role" {
         Action = "sts:AssumeRoleWithWebIdentity",
         Effect = "Allow",
         Principal = {
-          Federated = aws_iam_openid_connect_provider.eks-oidc.arn
+          Federated = module.eks.oidc_arn # aws_iam_openid_connect_provider.eks-oidc.arn
         },
         Condition = {
           "StringEquals" = {
-            "${aws_iam_openid_connect_provider.eks-oidc.url}:sub" = "system:serviceaccount:kube-system:aws-load-balancer-controller", #system:serviceaccount:<namespace>:<service-account-name>
-            "${aws_iam_openid_connect_provider.eks-oidc.url}:aud" = "sts.amazonaws.com"
+            "${module.eks.oidc_url}:sub" = "system:serviceaccount:kube-system:aws-load-balancer-controller", #system:serviceaccount:<namespace>:<service-account-name>
+            "${module.eks.oidc_url}:aud" = "sts.amazonaws.com"
+            # "${aws_iam_openid_connect_provider.eks-oidc.url}:sub" = "system:serviceaccount:kube-system:aws-load-balancer-controller", #system:serviceaccount:<namespace>:<service-account-name>
+            # "${aws_iam_openid_connect_provider.eks-oidc.url}:aud" = "sts.amazonaws.com"
           }
         }
       }
@@ -296,5 +292,5 @@ resource "kubernetes_service_account" "alb_controller_sa" {
       "eks.amazonaws.com/role-arn" = aws_iam_role.alb_controller_role.arn
     }
   }
-  depends_on = [ aws_eks_cluster.my_cluster, aws_eks_node_group.ondemand_nodes ]
+  depends_on = [ module.eks ]
 }

@@ -36,7 +36,7 @@ resource "aws_security_group" "allow_tls" {
 resource "aws_security_group" "cluster_sg" {
   name        = "eks-cluster-sg"
   description = "Node groups to cluster API"
-  vpc_id      = data.aws_vpc.main.id
+  vpc_id      = aws_vpc.main.id
 
   ingress {
     description = "Node groups to cluster API"

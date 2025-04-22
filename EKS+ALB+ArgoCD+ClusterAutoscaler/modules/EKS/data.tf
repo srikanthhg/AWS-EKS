@@ -34,7 +34,7 @@ data "aws_subnets" "private_subnets" {
 data "aws_security_group" "cluster_sg" {
   filter{
     name = "tag:Name" # filter by tag name
-    values = "cluster-sg"
+    values = ["cluster-sg"]
   }
   name = "eks-cluster-sg"
   vpc_id = data.aws_vpc.main.id
