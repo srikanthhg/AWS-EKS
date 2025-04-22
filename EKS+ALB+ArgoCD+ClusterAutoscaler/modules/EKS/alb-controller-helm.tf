@@ -18,7 +18,7 @@ resource "helm_release" "aws-load-balancer-controller" {
   
   {
     name  = "region"
-    value = "us-east-1"
+    value = var.region
   },
   {
     name  = "vpcId"

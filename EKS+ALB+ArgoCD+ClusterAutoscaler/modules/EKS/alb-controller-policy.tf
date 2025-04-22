@@ -4,10 +4,6 @@ resource "aws_iam_openid_connect_provider" "eks-oidc" {
   url             = data.tls_certificate.eks-certificate.url
 }
 
-# output "oidc_url"{
-#   value = aws_iam_openid_connect_provider.eks-oidc.url
-# }
-
 resource "aws_iam_role" "alb_controller_role" {
   name = "alb-controller-role"
   assume_role_policy = jsonencode({

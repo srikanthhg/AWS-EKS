@@ -1,5 +1,4 @@
 resource "aws_eks_cluster" "my_cluster" {
-
   # count    = var.is-eks-cluster-enabled == true ? 1 : 0
   name     = var.cluster_name
   role_arn = aws_iam_role.clusterrole.arn

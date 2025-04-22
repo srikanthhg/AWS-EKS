@@ -38,7 +38,3 @@ data "aws_eks_cluster" "eks-cluster" {
 data "aws_eks_cluster_auth" "eks-cluster-auth" {
   name = aws_eks_cluster.my_cluster.name
 }
-
-output "k8s_endpoint" {
-  value = data.aws_eks_cluster.eks-cluster.endpoint
-}

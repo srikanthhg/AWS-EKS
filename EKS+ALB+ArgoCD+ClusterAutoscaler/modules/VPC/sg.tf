@@ -3,14 +3,6 @@ resource "aws_security_group" "allow_tls" {
   name        = "allow_all"
   description = "Allow TLS inbound traffic"
   vpc_id      = aws_vpc.main.id
-  
-  #   ingress {
-  #   description = "Allow_All"
-  #   from_port   = 80
-  #   to_port     = 80
-  #   protocol    = "tcp"
-  #   cidr_blocks = ["0.0.0.0/0"]
-  # }
 
   ingress {
     description = "Allow_All"
@@ -20,7 +12,7 @@ resource "aws_security_group" "allow_tls" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  ingress {
+  ingress { # openvpn
     description = "Allow_All"
     from_port   = 1194
     to_port     = 1194
@@ -40,3 +32,28 @@ resource "aws_security_group" "allow_tls" {
   }
 }
 
+# for eks cluster
+resource "aws_security_group" "cluster_sg" {
+  name        = "eks-cluster-sg"
+  description = "Node groups to cluster API"
+  vpc_id      = data.aws_vpc.main.id
+
+  ingress {
+    description = "Node groups to cluster API"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"] # should be specific IP
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1" #all protocols are allowed
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "cluster-sg"
+  }
+}
