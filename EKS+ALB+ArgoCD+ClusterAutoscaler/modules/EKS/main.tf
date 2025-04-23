@@ -59,9 +59,9 @@ resource "aws_eks_node_group" "ondemand_nodes" {
   # subnet_ids      = [aws_subnet.private[0].id, aws_subnet.private[1].id]
   subnet_ids = data.aws_subnets.private_subnets.ids
   scaling_config {
-    desired_size = 4
+    desired_size = 2
     max_size     = 10
-    min_size     = 2
+    min_size     = 1
   }
   instance_types = ["t3.xlarge"] # t3.medium
   capacity_type  = "ON_DEMAND"
@@ -91,8 +91,8 @@ resource "aws_eks_node_group" "ondemand_nodes" {
     var.tags,
     {
       Name = "${local.name}-on-demand-managed-nodes"
-      "k8s.io/cluster-autoscaler/enabled"             = "true",
-      # "k8s.io/cluster-autoscaler/${var.cluster_name}" = "owned"
+      "k8s.io/cluster-autoscaler/enabled"             = "true", # for traditional cluster autoscaler
+      "k8s.io/cluster-autoscaler/${var.cluster_name}" = "owned" # for traditional cluster autoscaler
     },
 
   )
