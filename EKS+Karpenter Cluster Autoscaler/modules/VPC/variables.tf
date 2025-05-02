@@ -31,7 +31,10 @@ variable "igw_tags" {
   type    = map(string)
   default = {}
 }
-
+variable "region"{
+  description = "The AWS region to deploy the resources in"
+  type        = string
+}
 variable "nat_gateway_tags" {
   type    = map(string)
   default = {}

@@ -49,6 +49,11 @@ variable "region" {
   type        = string
 }
 
+variable "AWS_ACCOUNT_ID" {
+  description = "The AWS account ID"
+  type        = string
+}
+
 variable "eks_addons" {
   description = "List of EKS addons with name and version"
   type = list(object({

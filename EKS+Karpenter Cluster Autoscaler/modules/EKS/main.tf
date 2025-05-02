@@ -54,7 +54,7 @@ resource "aws_eks_addon" "example" {
 # managed node group 
 resource "aws_eks_node_group" "ondemand_nodes" {
   cluster_name    = aws_eks_cluster.my_cluster.name
-  node_group_name = "${local.name}-on-demand-nodes"
+  node_group_name = "${local.name}-on-demand-nodes-1"
   node_role_arn   = aws_iam_role.noderole.arn
   # subnet_ids      = [aws_subnet.private[0].id, aws_subnet.private[1].id]
   subnet_ids = data.aws_subnets.private_subnets.ids
@@ -91,6 +91,7 @@ resource "aws_eks_node_group" "ondemand_nodes" {
     var.tags,
     {
       Name = "${local.name}-on-demand-managed-nodes"
+      "karpenter.sh/discovery" = var.cluster_name
       # "k8s.io/cluster-autoscaler/enabled"             = "true", # for traditional cluster autoscaler
       # "k8s.io/cluster-autoscaler/${var.cluster_name}" = "owned" # for traditional cluster autoscaler
     },
