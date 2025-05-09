@@ -19,14 +19,18 @@ resource "helm_release" "argocd" {
       name  = "server.ingress.enabled"
       value = "false"
     },
-    {
-      name  = "server.extraArgs[0]"
-      value = "--insecure"
-    },
+    # {
+    #   name  = "server.extraArgs[0]"
+    #   value = "--insecure"
+    # },
     {
       name  = "server.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-internal"
       value = "false"
-    }
+    },
+    {
+      name  = "server.insecure"
+      value = "true"
+    },
   ]
 
   depends_on = [helm_release.aws-load-balancer-controller]

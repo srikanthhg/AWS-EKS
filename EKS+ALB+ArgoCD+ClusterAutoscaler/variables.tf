@@ -56,3 +56,8 @@ variable "eks_addons" {
     version = string
   }))
 }
+
+variable "email"  {
+  type        = string
+  description = "Email address for Let's Encrypt notifications"
+}

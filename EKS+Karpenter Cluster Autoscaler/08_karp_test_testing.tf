@@ -59,36 +59,6 @@ resource "aws_iam_role" "vpc_cni_role" {
 })
 }
 
-resource "aws_iam_role_policy_attachment" "vpc_cni_AmazonEKS_CNI_Policy" {
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
-  role       = aws_iam_role.vpc_cni_role.name
-}
-resource "aws_iam_role_policy_attachment" "karpenter_controller_policy_attachment12" {
-  policy_arn = aws_iam_policy.karpenter_controller_policy.arn
-  role       = aws_iam_role.vpc_cni_role.name
-}
-
-###############################
-
-resource "aws_iam_role" "for_pods"{
-  name = "karpenter_pod_role"
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Effect = "Allow",
-        Principal = {
-          Service = "pods.eks.amazonaws.com"
-        },
-        Action = [
-          "sts:AssumeRole",
-          "sts:TagSession"
-        ]
-      }
-    ]
-  })
-}
-
 resource "aws_iam_policy" "karpenter_controller_policy" {
   name        = "KarpenterControllerPolicy-${var.cluster_name}"
   description = "Karpenter Controller Policy"
@@ -357,9 +327,9 @@ resource "aws_iam_policy" "karpenter_controller_policy" {
   })
 }
 
-resource "aws_iam_role_policy_attachment" "karpenter_controller_policy_attachment" {
+resource "aws_iam_role_policy_attachment" "karpenter_controller_policy_attachment12" {
   policy_arn = aws_iam_policy.karpenter_controller_policy.arn
-  role       = aws_iam_role.for_pods.name
+  role       = aws_iam_role.vpc_cni_role.name
 }
 ###################################
 
@@ -525,13 +495,18 @@ resource "kubernetes_manifest" "karpenter_ec2nodeclass" {
           }
         }
       ]
-      metadataOptions = {
-        httpEndpoint            = "enabled"
-        httpProtocolIPv6        = "disabled"
-        httpPutResponseHopLimit = 1
-        httpTokens              = "required"
-      }
+      # metadataOptions = {
+      #   httpEndpoint            = "enabled"
+      #   httpProtocolIPv6        = "disabled"
+      #   httpPutResponseHopLimit = 1
+      #   httpTokens              = "required"
+      # }
     }
   }
   depends_on = [module.eks, kubernetes_manifest.karpenter_nodepool]
 }
+
+# apply labels to node security group
+#karpenter.sh/discovery = var.cluster_name
+#cluster_name = my-cluster
+# aws-auth configmap

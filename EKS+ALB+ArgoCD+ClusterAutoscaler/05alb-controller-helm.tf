@@ -30,7 +30,8 @@ resource "helm_release" "aws-load-balancer-controller" {
   },
   {
     name  = "serviceAccount.name"
-    value = "aws-load-balancer-controller"
+    value = kubernetes_service_account.alb_controller_sa.metadata[0].name
+    # value = "aws-load-balancer-controller"
   }
   ]
 

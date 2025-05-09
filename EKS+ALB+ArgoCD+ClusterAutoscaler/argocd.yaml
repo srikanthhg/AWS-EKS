@@ -5,19 +5,57 @@ metadata:
   namespace: argocd
   annotations:
     alb.ingress.kubernetes.io/scheme: internet-facing
-    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
     alb.ingress.kubernetes.io/target-type: ip
     alb.ingress.kubernetes.io/backend-protocol: HTTP
     alb.ingress.kubernetes.io/group.name: dev
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:608782704145:certificate/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx # <-- Replace this with your actual ACM cert ARN
+    alb.ingress.kubernetes.io/ssl-redirect: "443"
+
 spec:
   ingressClassName: alb
   rules:
-    - http:
+    - host: argocd.skanth306.shop
+      http:
         paths:
-          - path: / # argocd will work only in / , not working /argocd
+          - path: /
             pathType: Prefix
             backend:
               service:
                 name: argocd-server
                 port:
-                  number: 80 # Use port 80 if the service exposes HTTP
+                  number: 80
+
+
+
+
+
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: argocd-ingress
+#   namespace: argocd
+#   annotations:
+#     alb.ingress.kubernetes.io/scheme: internet-facing
+#     alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}]'
+#     alb.ingress.kubernetes.io/target-type: ip
+#     alb.ingress.kubernetes.io/backend-protocol: HTTP
+#     alb.ingress.kubernetes.io/group.name: dev
+#     # cert-manager.io/cluster-issuer: "letsencrypt-prod"
+# spec:
+#   ingressClassName: alb
+#   tls:
+#     - hosts:
+#         - argocd.skanth306.shop # Replace with your domain name
+#       secretName: skanth306-shop-tls  # certificate secret name
+#   rules:
+#     - host: argocd.skanth306.shop # Replace with your domain name
+#       http:
+#         paths:
+#           - path: / # argocd will work only in / , not working /argocd
+#             pathType: Prefix
+#             backend:
+#               service:
+#                 name: argocd-server
+#                 port:
+#                   number: 80 # Use port 80 if the service exposes HTTP
