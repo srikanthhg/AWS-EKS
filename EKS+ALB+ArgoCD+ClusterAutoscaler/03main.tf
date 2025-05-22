@@ -16,7 +16,7 @@ module "ec2" {
   project_name = var.project_name
   environment  = var.environment
 
-  depends_on = [ module.vpc ]
+  depends_on = [module.vpc]
 }
 
 module "eks" {
@@ -29,5 +29,5 @@ module "eks" {
   region          = var.region
   tags            = var.tags
 
-  depends_on = [ module.vpc, module.ec2]
+  depends_on = [module.vpc, module.ec2]
 }

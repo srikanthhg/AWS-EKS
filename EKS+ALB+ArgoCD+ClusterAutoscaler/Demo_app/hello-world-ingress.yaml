@@ -3,15 +3,20 @@ kind: Ingress
 metadata:
   name: hello-world-ingress
   annotations:
-    alb.ingress.kubernetes.io/scheme: internet-facing
-    alb.ingress.kubernetes.io/target-type: ip
-    alb.ingress.kubernetes.io/group.name: dev
-    alb.ingress.kubernetes.io/backend-protocol: HTTP
-    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"  #This should be "HTTP" unless your app services are serving TLS directly
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"  # or your issuer name
 spec:
-  ingressClassName: alb
+  ingressClassName: nginx
+  tls:
+  - hosts:
+      - myapp.skanth306.shop
+    secretName: skanth306-myappshop-tls
   rules:
-  - http:
+  - host: myapp.skanth306.shop
+    http:
       paths:
       - path: /hello-world-one
         pathType: Prefix
@@ -40,13 +45,20 @@ kind: Ingress
 metadata:
   name: hello-world-ingress-static
   annotations:
-    alb.ingress.kubernetes.io/scheme: internet-facing
-    alb.ingress.kubernetes.io/target-type: ip
-    alb.ingress.kubernetes.io/group.name: dev
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"  # or your issuer name
 spec:
-  ingressClassName: alb
+  ingressClassName: nginx
+  tls:
+  - hosts:
+      - myapp.skanth306.shop
+    secretName: skanth306-myappshop-tls
   rules:
-  - http:
+  - host: myapp.skanth306.shop
+    http:
       paths:
       - path: /static
         pathType: Prefix
@@ -55,3 +67,63 @@ spec:
             name: aks-helloworld-one
             port: 
               number: 80
+
+
+
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: hello-world-ingress
+#   annotations:
+#     alb.ingress.kubernetes.io/scheme: internet-facing
+#     alb.ingress.kubernetes.io/target-type: ip
+#     alb.ingress.kubernetes.io/group.name: dev
+#     alb.ingress.kubernetes.io/backend-protocol: HTTP
+#     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+# spec:
+#   ingressClassName: alb
+#   rules:
+#   - http:
+#       paths:
+#       - path: /hello-world-one
+#         pathType: Prefix
+#         backend:
+#           service:
+#             name: aks-helloworld-one
+#             port:
+#               number: 80
+#       - path: /hello-world-two
+#         pathType: Prefix
+#         backend:
+#           service:
+#             name: aks-helloworld-two
+#             port:
+#               number: 80
+#       - path: /
+#         pathType: Prefix
+#         backend:
+#           service:
+#             name: aks-helloworld-one
+#             port:
+#               number: 80
+# ---
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: hello-world-ingress-static
+#   annotations:
+#     alb.ingress.kubernetes.io/scheme: internet-facing
+#     alb.ingress.kubernetes.io/target-type: ip
+#     alb.ingress.kubernetes.io/group.name: dev
+# spec:
+#   ingressClassName: alb
+#   rules:
+#   - http:
+#       paths:
+#       - path: /static
+#         pathType: Prefix
+#         backend:
+#           service:
+#             name: aks-helloworld-one
+#             port: 
+#               number: 80

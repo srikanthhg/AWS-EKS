@@ -190,11 +190,38 @@ resource "kubernetes_manifest" "certificate" {
     apiVersion = "cert-manager.io/v1"
     kind      = "Certificate" # namespace resource
     metadata = {
-      name = "certificate-prod"
+      name = "certificate-prod-argocd"
       namespace = "argocd" # create the certificate where you appliation resides
     }
     spec = {
         secretName = "skanth306-shop-tls"
+        issuerRef = {
+            name = "letsencrypt-prod" # name of the ClusterIssuer
+            kind = "ClusterIssuer"
+        }
+        commonName = "*.skanth306.shop"
+        dnsNames = [
+            "*.skanth306.shop",
+            "skanth306.shop"
+        ]
+        duration = "2160h" # 90 days
+        renewBefore = "360h" # 15 days
+    }
+  }
+
+  depends_on = [module.eks, helm_release.cert_manager, kubernetes_manifest.cert_manager_cluster_issuer]
+}
+
+resource "kubernetes_manifest" "certificate1" {
+  manifest = {
+    apiVersion = "cert-manager.io/v1"
+    kind      = "Certificate" # namespace resource
+    metadata = {
+      name = "certificate-prod-default"
+      namespace = "default" # create the certificate where you appliation resides
+    }
+    spec = {
+        secretName = "skanth306-myappshop-tls"
         issuerRef = {
             name = "letsencrypt-prod" # name of the ClusterIssuer
             kind = "ClusterIssuer"

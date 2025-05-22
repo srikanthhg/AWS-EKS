@@ -23,15 +23,16 @@ resource "helm_release" "argocd" {
     #   name  = "server.extraArgs[0]"
     #   value = "--insecure"
     # },
-    {
-      name  = "server.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-internal"
-      value = "false"
-    },
+    # {
+    #   name  = "server.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-internal"
+    #   value = "false"
+    # },
+    # {
     {
       name  = "server.insecure"
-      value = "true"
-    },
+      value = "false" # This enables HTTPS on the Argo CD server service (port 443)
+    }
   ]
 
-  depends_on = [helm_release.aws-load-balancer-controller]
+  # depends_on = [helm_release.aws-load-balancer-controller]
 }
